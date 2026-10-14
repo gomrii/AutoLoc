@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "contrat")
 public class Paiement {
 
     @Id
@@ -27,4 +27,9 @@ public class Paiement {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ModePaiement modePaiement;
+
+    // Association N Paiement -> 1 Contrat (LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contrat_id")
+    private Contrat contrat;
 }

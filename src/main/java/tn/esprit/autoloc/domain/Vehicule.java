@@ -3,6 +3,8 @@ package tn.esprit.autoloc.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "vehicule")
@@ -11,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = {"agence", "reservations", "maintenances", "equipements"})
 public class Vehicule {
 
     @Id
@@ -41,4 +43,29 @@ public class Vehicule {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatutVehicule statut;
+
+    // Association N Vehicule -> 1 Agence (peut exister sans agence)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agence_id")
+    private Agence agence;
+
+    // Association 1 Vehicule -> N Reservations (LAZY, suppression vehicule supprime reservations)
+    @OneToMany(mappedBy = "vehicule", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<Reservation> reservations = new ArrayList<>();
+
+    // Association 1 Vehicule -> N Maintenances
+    @OneToMany(mappedBy = "vehicule", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Maintenance> maintenances = new ArrayList<>();
+
+    // Association N Vehicule <-> M Equipements (table de jointure, sans cascade remove)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "vehicule_equipement",
+        joinColumns = @JoinColumn(name = "vehicule_id"),
+        inverseJoinColumns = @JoinColumn(name = "equipement_id")
+    )
+    @Builder.Default
+    private List<Equipement> equipements = new ArrayList<>();
 }

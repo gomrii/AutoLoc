@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "vehicule")
 public class Maintenance {
 
     @Id
@@ -24,4 +24,9 @@ public class Maintenance {
     private LocalDate dateFin;
 
     private String description;
+
+    // Association N Maintenance -> 1 Vehicule (LAZY, cascade PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "vehicule_id")
+    private Vehicule vehicule;
 }

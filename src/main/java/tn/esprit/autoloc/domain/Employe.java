@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "agence")
 public class Employe {
 
     @Id
@@ -29,4 +29,9 @@ public class Employe {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleEmploye role;
+
+    // Association N Employe -> 1 Agence (LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agence_id")
+    private Agence agence;
 }

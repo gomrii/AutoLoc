@@ -3,6 +3,8 @@ package tn.esprit.autoloc.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "agence")
@@ -11,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = {"vehicules", "employes"})
 public class Agence {
 
     @Id
@@ -29,4 +31,14 @@ public class Agence {
     private String adresse;
 
     private String telephone;
+
+    // Association 1 Agence -> N Vehicules (EAGER, persist/merge)
+    @OneToMany(mappedBy = "agence", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @Builder.Default
+    private List<Vehicule> vehicules = new ArrayList<>();
+
+    // Association 1 Agence -> N Employes (LAZY, pas de suppression en cascade)
+    @OneToMany(mappedBy = "agence", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Employe> employes = new ArrayList<>();
 }

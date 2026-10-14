@@ -3,6 +3,8 @@ package tn.esprit.autoloc.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "equipement")
@@ -11,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "vehicules")
 public class Equipement {
 
     @Id
@@ -21,4 +23,9 @@ public class Equipement {
     @NotBlank
     @Column(nullable = false, unique = true)
     private String libelle;
+
+    // Association M Equipement <-> N Vehicules (LAZY)
+    @ManyToMany(mappedBy = "equipements", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Vehicule> vehicules = new ArrayList<>();
 }
